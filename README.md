@@ -53,7 +53,7 @@ Spark puede ejecutarse sobre varios sistemas de gestión de clúster:
 
 # 🖥️ Requisitos mínimos para instalar Apache Spark
 ✔️ Requisitos de software
-- **Java** 8, 11 o 17 (según versión de Spark)
+- **Java** 11 o 17 (según versión de Spark)
 - **Python** (si planeas usar PySpark): 3.7 o superior
 - **Scala** (opcional): usualmente 2.12 o 2.13
 - **Hadoop** (opcional): solo necesario si usarás HDFS o YARN
@@ -84,6 +84,30 @@ Depende de la carga, pero comúnmente:
 
 Nota. Tener instalado Ubuntu 24.04 / usuario hadoop / Java 11 con [Hadoop](https://github.com/jllanosb/install-apache-hadoop) + [Hive Metastore PostgreSQL](https://github.com/jllanosb/install-apache-hive)
 
+# Habilitar Java 17
+
+🔹 Paso 1: Instalar OpenJDK 17
+```bash
+sudo apt update
+sudo apt install openjdk-8-jdk -y
+```
+Exportar la ruta manualmente en tu entorno:
+```bash
+sudo nano ~/.bashrc
+```
+# Java 17
+```bash
+export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+export PATH=$JAVA_HOME/bin:$PATH
+```
+y luego recarga el entorno:
+```bash
+source ~/.bashrc
+```
+Ejecuta:
+```
+java -version
+```
 # 1. Descargar Apache Spark
 
 Recomendación estable: Spark 3.5.7 (con Hadoop 3.4.2 prebuilt, compatible con 3.4.x runtime sin conflicto)
@@ -121,7 +145,7 @@ sudo -u hadoop nano $SPARK_HOME/conf/spark-env.sh
 agregar:
 ```bash
 # Java For Spark
-export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
+export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
 export HADOOP_CONF_DIR=/opt/hadoop/etc/hadoop
 export YARN_CONF_DIR=/opt/hadoop/etc/hadoop
 ```
@@ -179,7 +203,7 @@ spark-submit \
   $SPARK_HOME/examples/jars/spark-examples_2.12-3.5.7.jar 1000
 ```
 
-Ejecutar job spark ejemplo sobre YARN: segun la version jar (2.12-3.5.7)
+Ejecutar job spark ejemplo sobre YARN: segun la version jar (2.13-4.0.1)
 ```bash
 spark-submit --master yarn --deploy-mode client \
   --class org.apache.spark.examples.SparkPi \
@@ -196,8 +220,9 @@ spark-submit \
 ```
 
 Si corre sin error → Spark on Yarn OK + integración Hadoop OK.
-Hasta aquí tenemos:
-Componente	Estado
-Hadoop /opt/hadoop	✅
-Hive Metastore PostgreSQL	✅
-Spark on YARN /opt/spark	✅ integrado
+
+Se tiene:
+- Hadoop /opt/hadoop	✅
+- Hive Metastore PostgreSQL	✅
+- Spark on YARN /opt/spark	✅ integrado
+
