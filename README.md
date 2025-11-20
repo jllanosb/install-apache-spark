@@ -57,6 +57,7 @@ Spark puede ejecutarse sobre varios sistemas de gestión de clúster:
 - **Python** (si planeas usar PySpark): 3.7 o superior
 - **Scala** (opcional): usualmente 2.12 o 2.13
 - **Hadoop** (opcional): solo necesario si usarás HDFS o YARN
+
 Spark puede correr **sin Hadoop** en modo Standalone.
 
 # 🧰 Requisitos mínimos de hardware (modo local)
@@ -80,3 +81,16 @@ Depende de la carga, pero comúnmente:
 - **RAM por nodo**: entre 32–128 GB
 - **Red**: 10 Gbps
 - **Almacenamiento**: HDFS o S3
+
+Nota. Tener instalado Ubuntu 24.04 / usuario hadoop / Java 11 con [Hadoop](https://github.com/jllanosb/install-apache-hadoop) + [Hive Metastore PostgreSQL](https://github.com/jllanosb/install-apache-hive)
+
+# 1. Descargar Apache Spark
+
+Recomendación estable: Spark 3.5.7 (con Hadoop 3.4.2 prebuilt, compatible con 3.4.x runtime sin conflicto)
+```bash
+cd /tmp
+wget https://dlcdn.apache.org/spark/spark-4.0.1/spark-4.0.1-bin-hadoop3.tgz
+sudo mkdir -p /opt/spark
+sudo tar -xzf spark-4.0.1-bin-hadoop3.tgz -C /opt/spark --strip-components=1
+sudo chown -R hadoop:hadoop /opt/spark
+```
