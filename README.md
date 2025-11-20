@@ -94,3 +94,110 @@ sudo mkdir -p /opt/spark
 sudo tar -xzf spark-4.0.1-bin-hadoop3.tgz -C /opt/spark --strip-components=1
 sudo chown -R hadoop:hadoop /opt/spark
 ```
+
+# 2. Variables de entorno Spark
+```bash
+sudo -u hadoop nano ~/.bashrc
+```
+agregar:
+```bash
+# Apache Spark
+export SPARK_HOME=/opt/spark
+export PATH=$PATH:$SPARK_HOME/bin:$SPARK_HOME/sbin
+export PYSPARK_PYTHON=/usr/bin/python3
+export HADOOP_CONF_DIR=/opt/hadoop/etc/hadoop
+export YARN_CONF_DIR=/opt/hadoop/etc/hadoop
+```
+```bash
+source ~/.bashrc
+```
+# 3. Integración Spark + Hadoop
+
+Spark debe apuntar al mismo config de Hadoop para que YARN lo gestione.
+```bash
+sudo -u hadoop cp $SPARK_HOME/conf/spark-env.sh.template $SPARK_HOME/conf/spark-env.sh
+sudo -u hadoop nano $SPARK_HOME/conf/spark-env.sh
+```
+agregar:
+```bash
+# Java For Spark
+export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
+export HADOOP_CONF_DIR=/opt/hadoop/etc/hadoop
+export YARN_CONF_DIR=/opt/hadoop/etc/hadoop
+```
+# 4. Integrar Hive Metastore con Spark SQL
+```bash
+sudo -u hadoop cp /opt/hive/conf/hive-site.xml /opt/spark/conf/
+```
+Spark ya puede leer Metastore PostgreSQL.
+# 5. Prueba avanzada Spark on YARN
+
+Levantar YARN y DFS (si no está arriba)
+```bash
+start-dfs.sh
+start-yarn.sh
+```
+Verificar
+```bash
+hdfs dfs -ls /user/hadoop/
+hdfs dfs -chmod -R 755 /user/hadoop
+hdfs dfs -rm -r /user/hadoop/.sparkStaging
+```
+Revisar la configuracion yarn-env.sh
+```bash 
+sudo nano $HADOOP_HOME/etc/hadoop/yarn-env.sh
+```
+
+Verificar y/o agregar 
+```bash
+export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+```
+
+Verificar jars
+```bash
+ls /opt/spark/examples/jars/
+```
+Identifica que version de jar se tiene _2.12-3.5.7.jar or _2.13-4.0.1.jar
+```
+spark-examples_2.13-4.0.1.jar
+```
+# 6. Probar Funcionamiento de Spark
+Ejecutar job spark ejemplo sobre YARN: segun la version jar (2.12-3.5.7)
+```bash
+spark-submit --master yarn --deploy-mode client \
+  --class org.apache.spark.examples.SparkPi \
+  $SPARK_HOME/examples/jars/spark-examples_2.12-3.5.7.jar 1000
+```
+
+Ejecuta el siguiente codigo si falla el codigo anterior al configurar el tamaño de memoria
+```bash
+spark-submit \
+  --master yarn \
+  --deploy-mode client \
+  --conf spark.yarn.jars=local:///opt/spark/jars/* \
+  --class org.apache.spark.examples.SparkPi \
+  $SPARK_HOME/examples/jars/spark-examples_2.12-3.5.7.jar 1000
+```
+
+Ejecutar job spark ejemplo sobre YARN: segun la version jar (2.12-3.5.7)
+```bash
+spark-submit --master yarn --deploy-mode client \
+  --class org.apache.spark.examples.SparkPi \
+  $SPARK_HOME/examples/jars/spark-examples_2.13-4.0.1.jar 1000
+```
+Ejecuta el siguiente codigo si falla el codigo anterior al configurar el tamaño de memoria
+```bash
+spark-submit \
+  --master yarn \
+  --deploy-mode client \
+  --conf spark.yarn.jars=local:///opt/spark/jars/* \
+  --class org.apache.spark.examples.SparkPi \
+  $SPARK_HOME/examples/jars/spark-examples_2.13-4.0.1.jar 1000
+```
+
+Si corre sin error → Spark on Yarn OK + integración Hadoop OK.
+Hasta aquí tenemos:
+Componente	Estado
+Hadoop /opt/hadoop	✅
+Hive Metastore PostgreSQL	✅
+Spark on YARN /opt/spark	✅ integrado
