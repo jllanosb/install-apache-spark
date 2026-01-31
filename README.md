@@ -132,8 +132,24 @@ export PYSPARK_PYTHON=/usr/bin/python3
 export HADOOP_CONF_DIR=/opt/hadoop/etc/hadoop
 export YARN_CONF_DIR=/opt/hadoop/etc/hadoop
 ```
+Actualizar
 ```bash
 source ~/.bashrc
+```
+Verificar la version
+```bash
+spark-submit --version
+```
+Resultado similar
+```
+Welcome to
+      ____              __
+     / __/__  ___ _____/ /__
+    _\ \/ _ \/ _ `/ __/  '_/
+   /___/ .__/\_,_/_/ /_/\_\   version 4.0.1
+      /_/
+
+Using Scala version 2.13.16 ...
 ```
 # 3. Integración Spark + Hadoop
 
