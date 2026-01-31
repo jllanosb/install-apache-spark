@@ -89,13 +89,13 @@ Nota. Tener instalado Ubuntu 24.04 / usuario hadoop / Java 11 con [Hadoop](https
 🔹 Paso 1: Instalar OpenJDK 17
 ```bash
 sudo apt update
-sudo apt install openjdk-8-jdk -y
+sudo apt install openjdk-17-jdk -y
 ```
 Exportar la ruta manualmente en tu entorno:
 ```bash
 sudo nano ~/.bashrc
 ```
-# Java 17
+Java 17
 ```bash
 export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
 export PATH=$JAVA_HOME/bin:$PATH
@@ -110,7 +110,7 @@ java -version
 ```
 # 1. Descargar Apache Spark
 
-Recomendación estable: Spark 3.5.7 (con Hadoop 3.4.2 prebuilt, compatible con 3.4.x runtime sin conflicto)
+Recomendación estable: Spark 3.5.8 (con Hadoop 3.4.2 prebuilt, compatible con 3.4.x runtime sin conflicto) [Consulta nuevas versiones](https://spark.apache.org/downloads.html) Instalaremos `Apache Spark 4.0.1`:
 ```bash
 cd /tmp
 wget https://dlcdn.apache.org/spark/spark-4.0.1/spark-4.0.1-bin-hadoop3.tgz
