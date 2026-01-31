@@ -197,16 +197,16 @@ Verificar jars
 ```bash
 ls /opt/spark/examples/jars/
 ```
-Identifica que version de jar se tiene _2.12-3.5.7.jar or _2.13-4.0.1.jar
+Identifica que version de jar se tiene _2.12-3.5.8.jar or _2.13-4.0.1.jar
 ```
 spark-examples_2.13-4.0.1.jar
 ```
 # 6. Probar Funcionamiento de Spark
-Ejecutar job spark ejemplo sobre YARN: segun la version jar (2.12-3.5.7)
+Ejecutar job spark ejemplo sobre YARN: segun la version jar (2.12-3.5.8)
 ```bash
 spark-submit --master yarn --deploy-mode client \
   --class org.apache.spark.examples.SparkPi \
-  $SPARK_HOME/examples/jars/spark-examples_2.12-3.5.7.jar 1000
+  $SPARK_HOME/examples/jars/spark-examples_2.12-3.5.8.jar 1000
 ```
 
 Ejecuta el siguiente codigo si falla el codigo anterior al configurar el tamaño de memoria
@@ -216,7 +216,7 @@ spark-submit \
   --deploy-mode client \
   --conf spark.yarn.jars=local:///opt/spark/jars/* \
   --class org.apache.spark.examples.SparkPi \
-  $SPARK_HOME/examples/jars/spark-examples_2.12-3.5.7.jar 1000
+  $SPARK_HOME/examples/jars/spark-examples_2.12-3.5.8.jar 1000
 ```
 
 Ejecutar job spark ejemplo sobre YARN: segun la version jar (2.13-4.0.1)
