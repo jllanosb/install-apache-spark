@@ -323,7 +323,7 @@ hive --service hiveserver2 &
 
 YARN/HDFS ya deberían estar arriba.
 
-## 🧪 Paso 5: Pruebor Funcionamiento de Spark
+# 8 Probar Funcionamiento de Spark con Scala
 
 Arranca Spark para usar `Scala` por Defecto:
 ```bash
@@ -336,12 +336,81 @@ spark.sql("SHOW DATABASES").show()
 ```
 
 Luego `Crear` una base de datos llamada `analytics` y `Consultar` si se creó:
-```
+```sql
 spark.sql("CREATE DATABASE IF NOT EXISTS analytics")
 spark.sql("SHOW DATABASES").show()
 ```
+Salida:
+```sql
++------------+
+|   namespace|
++------------+
+|   analytics|
+|     default|
++------------+
+```
+## 💪 Ejercicio de funcionamiento real de Spark + Hive + HDFS usando la base de datos Analytics creada
 
-# 8. Ejemplo de Funcionamiento de Spark usando Pyspark
+Vamos a probar un pipeline completo de datos que:
+- Crea una tabla particionada en Hive usando Spark.
+- Escribe datos Parquet en HDFS.
+- Consulta los datos desde Spark SQL.
+- Usa particiones para filtrar y medir rendimiento.
+
+1️⃣ Crear DataFrame de ejemplo
+```sql
+import org.apache.spark.sql.functions._
+import spark.implicits._
+
+// Generamos datos de logs simulados
+val logs = Seq(
+  ("2026-01-30", "INFO", "Login success"),
+  ("2026-01-30", "ERROR", "Payment failed"),
+  ("2026-01-31", "INFO", "Page visited"),
+  ("2026-01-31", "WARN", "Timeout warning")
+).toDF("date", "level", "message")
+```
+2️⃣ Crear tabla particionada en Hive
+```sql
+spark.sql("USE analytics")
+
+logs.write
+  .mode("overwrite")
+  .partitionBy("date")
+  .format("parquet")
+  .saveAsTable("logs_parquet")
+```
+
+Esto crea automáticamente:
+`HDFS path: /user/hive/warehouse/analytics.db/logs_parquet/`
+
+Particiones por fecha (date=2026-01-30, date=2026-01-31)
+
+3️⃣ Consultar datos filtrando partición
+```sql
+spark.sql("SELECT * FROM logs_parquet WHERE date='2026-01-30'").show()
+```
+Esto demostrará que Spark usa particiones, sin leer todo el parquet.
+
+4️⃣ Extra: ver la tabla desde Hive usando Beeline CLI
+```sql
+USE analytics;
+SHOW TABLES;
+SELECT * FROM logs_parquet WHERE date='2026-01-30';
+```
+Spark y Hive leen la misma tabla desde el metastore.
+
+Salida esperada:
+```sql
++-----+--------------+----------+
+|level|       message|      date|
++-----+--------------+----------+
+| INFO| Login success|2026-01-30|
+|ERROR|Payment failed|2026-01-30|
++-----+--------------+----------+
+```
+
+# 9. Ejemplo de Funcionamiento de Spark usando Pyspark
 
 Arranca Spark para usar `Pyspark`:
 ```bash
@@ -385,7 +454,10 @@ Esto debería mostrar algo como:
 | pyspark_hive   |
 +----------------+
 ```
-
+Salir de Scala:
+```bash
+:q
+```
 ## 4️⃣ Crear una tabla dentro de la base de datos
 
 Supongamos que queremos una tabla de ejemplo llamada empleados:
@@ -428,6 +500,10 @@ Salida esperada:
 |  2|  Luis| 4000.5 |
 |  3| María| 3500.75|
 +---+------+--------+
+```
+Salir de Pyspark
+```python
+exit()
 ```
 
 © 2025 Jaime Llanos Bardales.  
