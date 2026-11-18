@@ -273,15 +273,6 @@ spark-submit \
   $SPARK_HOME/examples/jars/spark-examples_2.13-4.3.0.jar 1000
 ```
 
-Ejecutar job spark ejemplo sobre YARN y usandp Hive 4.1.0: segun la version jar (2.13-4.3.0)
-
-```bash
-pyspark \
-  --conf spark.sql.catalogImplementation=hive \
-  --conf spark.sql.hive.metastore.version=4.1.0 \
-  --conf spark.sql.hive.metastore.jars=maven
-```
-
 Si corre sin error → Spark on Yarn OK + integración Hadoop OK.
 
 Se tiene:
@@ -496,6 +487,15 @@ Arranca Spark para usar `Pyspark`:
 
 ```bash
 pyspark --master yarn
+```
+
+Ejecutar job spark ejemplo sobre YARN y usando Hive 4.1.0: segun la version jar (2.13-4.3.0)
+
+```bash
+pyspark \
+  --conf spark.sql.catalogImplementation=hive \
+  --conf spark.sql.hive.metastore.version=4.1.0 \
+  --conf spark.sql.hive.metastore.jars=maven
 ```
 
 ## 1️⃣ Configuración inicial de PySpark
