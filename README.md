@@ -378,7 +378,32 @@ YARN/HDFS ya deberían estar arriba.
 Arranca Spark para usar `Scala` por Defecto:
 
 ```bash
-spark-shell --master yarn
+cd /opt/spark/bin
+./spark-shell --master yarn
+```
+
+Ejecutar tu primer programa en `Scala`
+
+Prueba estos comandos:
+
+```sql
+val datos = Seq(1, 2, 3, 4, 5)
+val df = datos.toDF("numeros")
+df.show()
+```
+
+Resultado:
+
+```text
++-------+
+|numeros|
++-------+
+|      1|
+|      2|
+|      3|
+|      4|
+|      5|
++-------+
 ```
 
 Dentro de `Scala>` visualizamos las bases de datos en Hive:
@@ -486,13 +511,14 @@ Salida esperada:
 Arranca Spark para usar `Pyspark`:
 
 ```bash
-pyspark --master yarn
+cd /opt/spark/bin
+./pyspark --master yarn
 ```
 
 Ejecutar job spark ejemplo sobre YARN y usando Hive 4.1.0: segun la version jar (2.13-4.3.0)
 
 ```bash
-pyspark \
+./pyspark \
   --conf spark.sql.catalogImplementation=hive \
   --conf spark.sql.hive.metastore.version=4.1.0 \
   --conf spark.sql.hive.metastore.jars=maven
