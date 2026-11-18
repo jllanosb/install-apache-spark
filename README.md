@@ -1,4 +1,4 @@
-# INSTALACIÓN DE APACHE SPARK 4.3.0 EN UBUNTU 26.04
+# INSTALACIÓN DE APACHE SPARK 4.3.0 EN UBUNTU 26.04 CON JAVA 21
 
 Apache Spark es un framework de procesamiento de datos de código abierto diseñado para trabajar con grandes volúmenes de información de manera rápida, distribuida y tolerante a fallos.
 Es una evolución de Hadoop MapReduce, ofreciendo un rendimiento mucho mayor gracias a su uso intensivo de procesamiento en memoria (in-memory computing).
@@ -62,9 +62,9 @@ Spark puede ejecutarse sobre varios sistemas de gestión de clúster:
 
 ✔️ Requisitos de software
 
-- **Java** 17 (según versión de Spark)
+- **Java** 21 (según versión de Spark)
 - **Python** (si planeas usar PySpark): 3.7 o superior
-- **Scala** (opcional): usualmente 2.12 o 2.13
+- **Scala** (opcional): usualmente 2.13
 - **Hadoop** (opcional): solo necesario si usarás HDFS o YARN
 
 Spark puede correr **sin Hadoop** en modo Standalone.
@@ -94,15 +94,15 @@ Depende de la carga, pero comúnmente:
 - **Red**: 10 Gbps
 - **Almacenamiento**: HDFS o S3
 
-Nota. Tener instalado Ubuntu 26.04 / Usuario hadoop / Java 17 con [Hadoop](https://github.com/jllanosb/install-apache-hadoop) + [Hive Metastore PostgreSQL](https://github.com/jllanosb/install-apache-hive)
+Nota. Tener instalado Ubuntu 26.04 / Usuario hadoop / Java 21 con [Hadoop](https://github.com/jllanosb/install-apache-hadoop) + [Hive Metastore PostgreSQL](https://github.com/jllanosb/install-apache-hive)
 
-# Habilitar Java 17 (Opcional sino tiene instalado)
+# Habilitar Java 21 (Opcional sino tiene instalado)
 
-🔹 Paso 1: Instalar OpenJDK 17
+🔹 Paso 1: Instalar OpenJDK 21
 
 ```bash
 sudo apt update
-sudo apt install openjdk-17-jdk -y
+sudo apt install openjdk-21-jdk -y
 ```
 
 Exportar la ruta manualmente en tu entorno:
@@ -111,10 +111,10 @@ Exportar la ruta manualmente en tu entorno:
 sudo nano ~/.bashrc
 ```
 
-Java 17
+Java 21
 
 ```bash
-export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+export JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64
 export PATH=$JAVA_HOME/bin:$PATH
 ```
 
@@ -132,7 +132,7 @@ java -version
 
 # 1. Descargar Apache Spark
 
-Recomendación estable: Spark 4.3.0 (Compatible con Hadoop 3.5.0 (Java 17), Hive 4.1.0 (Java 17) sin conflicto) [Consulta nuevas versiones](https://spark.apache.org/downloads.html) Instalaremos `Apache Spark 4.3.0`:
+Recomendación estable: Spark 4.3.0 (Compatible con Hadoop 3.5.0 (Java 21), Hive 4.2.1 (Java 21) sin conflicto) [Consulta nuevas versiones](https://spark.apache.org/downloads.html) Instalaremos `Apache Spark 4.3.0`:
 
 ```bash
 cd /tmp
@@ -151,6 +151,7 @@ sudo -u hadoop nano ~/.bashrc
 agregar:
 
 ```bash
+
 # Apache Spark
 export SPARK_HOME=/opt/spark
 export PATH=$PATH:$SPARK_HOME/bin:$SPARK_HOME/sbin
@@ -181,7 +182,7 @@ Welcome to
    /___/ .__/\_,_/_/ /_/\_\   version 4.3.0
       /_/
 
-Using Scala version 2.13.16 ...
+Using Scala version 2.13.18 ...
 ```
 
 # 3. Integración Spark + Hadoop
@@ -198,7 +199,7 @@ agregar:
 ```bash
 
 # Java For Spark
-export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+export JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64
 export HADOOP_CONF_DIR=/opt/hadoop/etc/hadoop
 export YARN_CONF_DIR=/opt/hadoop/etc/hadoop
 ```
@@ -237,7 +238,7 @@ sudo nano $HADOOP_HOME/etc/hadoop/yarn-env.sh
 Verificar y/o agregar
 
 ```bash
-export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+export JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64
 ```
 
 Verificar jars
@@ -508,16 +509,10 @@ Salida esperada:
 
 # 9. Ejemplo de Funcionamiento de Spark usando Pyspark
 
-Arranca Spark para usar `Pyspark`:
+Arranca Spark para usar `Pyspark`, Ejecutar job spark sobre YARN y usando Hive 4.1.0: segun la version jar (2.13-4.3.0)
 
 ```bash
 cd /opt/spark/bin
-./pyspark --master yarn
-```
-
-Ejecutar job spark ejemplo sobre YARN y usando Hive 4.1.0: segun la version jar (2.13-4.3.0)
-
-```bash
 ./pyspark \
   --conf spark.sql.catalogImplementation=hive \
   --conf spark.sql.hive.metastore.version=4.1.0 \
@@ -549,6 +544,8 @@ Crear base de datos llamada `pyspark_hive`
 ```sql
 spark.sql("CREATE DATABASE IF NOT EXISTS pyspark_hive")
 ```
+
+`Descargará MAVEN paquetes necesarios para la ejecucion tomara minimo 5 minutos`
 
 Esto verifica si la base de datos existe antes de crearla, evitando errores.
 
@@ -598,6 +595,10 @@ spark.sql("""
     (1, 'Ana', 3000.0),
     (2, 'Luis', 4000.5),
     (3, 'María', 3500.75)
+    (4, 'Diana', 2500.0)
+    (5, 'Susy', 500.0)
+    (6, 'Judith', 1500.0)
+
 """)
 ```
 
@@ -619,6 +620,9 @@ Salida esperada:
 |  1|   Ana| 3000.0 |
 |  2|  Luis| 4000.5 |
 |  3| María| 3500.75|
+|  4| Diana| 2500.0 |
+|  5|  Susy|  500.0 |
+|  6|Judith| 1500.0 |
 +---+------+--------+
 ```
 
